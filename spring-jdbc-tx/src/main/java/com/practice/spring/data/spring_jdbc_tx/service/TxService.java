@@ -128,7 +128,7 @@ public class TxService {
 
         TransactionStatus status = txManager.getTransaction(def);
 
-        jdbc.update("UPDATE account SET balance = balance + 5 WHERE id = 2);");
+        jdbc.update("UPDATE account SET balance = balance + 5 WHERE id = 2;");
 
     }
 

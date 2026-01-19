@@ -29,6 +29,57 @@ Isolation defines how concurrent transactions interact to maintain data consiste
 * **SERIALIZABLE** : Prevents dirty reads, non-repeatable reads, and phantom reads. (Transactions execute as if they run sequentially) Guarantees consistent snapshot & Detects conflict
 
 ---
+## Transaction Visibility Matrix (MVCC + Isolation)
+
+### Read + Write  
+**Question:** Does transaction **X** see changes made by transaction **Y**?
+
+| X Isolation | Y Isolation | X sees Y’s change? | Detailed Reason |
+|------------|------------|--------------------|-----------------|
+| RC | RC | ✔ | RC reads the latest committed data. If Y commits before X reads again, X sees Y’s changes (non-repeatable read possible). |
+| RC | RR | ✔ | Even though Y uses a snapshot, once Y commits, RC always reads the latest committed version. |
+| RC | S | ✔ | Serializable also commits changes normally; RC always sees latest committed data. |
+| RR | RC | ✖ | RR uses a snapshot taken at transaction start, so later commits from Y are hidden. |
+| RR | RR | ✖ | Both use snapshots from their own start time; X never sees Y’s later commits. |
+| RR | S | ✖ | Serializable uses snapshot visibility; X does not see Y’s committed changes during its transaction. |
+| S | RC | ✖ / ⚠ | Serializable X uses a snapshot, so it does not see Y’s changes. If Y modified data X read, X may fail at commit due to conflict detection. |
+| S | RR | ✖ / ⚠ | Same snapshot behavior hides Y’s changes. If conflicting read/write pattern detected, X aborts at commit. |
+| S | S | ✖ / ⚠ | Both run on snapshots. If they conflict on same data, one transaction will be aborted to preserve serial order. |
+
+---
+
+### Write + Read  
+**Question:** Does transaction **Y** see changes made by transaction **X**?
+
+| X Isolation | Y Isolation | Y sees X’s change? | Detailed Reason |
+|------------|------------|--------------------|-----------------|
+| RC | RC | ✔ | Y reads latest committed data. If X commits before Y reads, Y sees X’s changes. |
+| RC | RR | ✖ | Y’s snapshot was taken before X committed, so X’s changes are hidden. |
+| RC | S | ✖ | Serializable Y uses snapshot isolation; it does not see X’s later commit. |
+| RR | RC | ✔ | RC always reads latest committed data, so Y sees X’s commit. |
+| RR | RR | ✖ | Y works on its own snapshot and does not see X’s later commit. |
+| RR | S | ✖ / ⚠ | Y does not see X’s changes due to snapshot. If both updated same data, one may abort at commit. |
+| S | RC | ✔ | RC reads latest committed data, so Y sees X’s commit. |
+| S | RR | ✖ | RR snapshot hides X’s later commit. |
+| S | S | ✖ / ⚠ | Both use snapshots. If X and Y update same data, one transaction will abort at commit. |
+
+---
+
+## Legend
+
+✔ → Change is visible  
+✖ → Change is not visible due to snapshot rules  
+⚠ → Transaction may abort at commit due to SERIALIZABLE conflict detection
+
+---
+
+## Key Takeaway
+
+- **READ COMMITTED** → Always reads latest committed data.  
+- **REPEATABLE READ** → Always reads snapshot from transaction start.  
+- **SERIALIZABLE** → Same as snapshot + prevents conflicts by aborting one transaction.
+
+---
 #### Propagation
 Propagation defines how a transaction behaves when called within another transaction.  
 It determines transaction boundaries and interaction with existing transactions.

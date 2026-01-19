@@ -1,18 +1,41 @@
 #### Data Access Layers
 
-| Aspects                | JDBC                 | MyBatis           | JPA                           |
-| -------------------- | -------------------- | ----------------- | ----------------------------- |
-| Mapping              | Manual (ResultSet)   | XML / Annotations | Automatic ORM                 |
-| Relationships        | Manual joins         | Manual joins      | Annotations (@OneToMany etc.) |
-| Fetching             | Always explicit      | Always explicit   | Lazy / Eager                  |
-| Updates              | Explicit SQL         | Explicit SQL      | Dirty checking (automatically detects changed entity fields)               |
-| Transaction handling | Manual               | Spring-managed    | Spring-managed                |
-| Boilerplate          | Very high            | Medium            | Low                           |
-| Control              | Fullest              | High              | Abstracted                    |
-| Performance tuning   | Fully manual         | Manual & flexible | Needs understanding           |
-| Learning curve       | Low API, high effort | Moderate          | Steep initially               |
-| Surprise behavior    | Very low             | Low               | Possible if unaware           |
-| Flow                 | Spring Service ↓ Spring JDBC (JdbcTemplate / NamedParameterJdbcTemplate) ↓ JDBC Driver ↓ Database |Spring Service ↓ MyBatis Mapper Interface ↓ MyBatis SQL Session ↓ JDBC Driver ↓ Database | Spring Data Repository ↓ JPA EntityManager (standard API) ↓ Hibernate Session (actual implementation) ↓ JDBC Driver ↓ Database |
+| Category | What this category means | JDBC | MyBatis | JPA / JPQL |
+|----------|---------------------------|------|---------|------------|
+| Abstraction level | How far the framework hides database details from you | Very low (you see everything) | Medium (SQL hidden slightly) | High (DB mostly hidden) |
+| Primary philosophy | What the framework is designed around | Database-first | SQL-first | Object-first |
+| Who writes SQL | Do you write SQL manually? | Always | Always | Mostly no (JPQL instead) |
+| SQL predictability | Can you know exactly what SQL runs? | 100% predictable | 100% predictable | Not always predictable |
+| Boilerplate code | Extra repetitive code needed | Very high | Low | Very low |
+| Learning curve | How hard it is to learn | Medium | Medium | High |
+| Magic / implicit behavior | Does the framework do hidden things? | None | Very little | A lot |
+| ORM support | Automatic mapping between objects & tables | ❌ No | ❌ No | ✅ Yes |
+| Entity lifecycle | Does framework track object state? | ❌ | ❌ | ✅ |
+| Dirty checking | Does it auto-detect object changes? | ❌ | ❌ | ✅ |
+| Automatic INSERT/UPDATE | Do DB writes happen automatically? | ❌ | ❌ | ✅ |
+| Cascading operations | Related objects auto-saved/deleted? | ❌ | ❌ | ✅ |
+| First-level cache | Same data reused inside a transaction? | ❌ | ❌ | ✅ |
+| Second-level cache | Data reused across transactions? | ❌ | ⚠️ Optional | ⚠️ Optional |
+| Query cache | Query results cached? | ❌ | ⚠️ Limited | ⚠️ Limited |
+| Dynamic SQL support | Can SQL change based on conditions? | ❌ Manual | ✅ Powerful | ⚠️ Limited |
+| Complex queries | Handling very complex SQL | Excellent | Excellent | Average |
+| Stored procedures | Can call DB stored procedures | ✅ | ✅ | ⚠️ Limited |
+| Batch operations | Efficient bulk inserts/updates | Excellent | Very good | Risky unless tuned |
+| Transaction management | Who controls commit/rollback | You / Spring | Spring | Spring (automatic) |
+| DB portability | Can you switch databases easily? | ❌ | ⚠️ Partial | ✅ |
+| Vendor lock-in | Tied to a specific DB vendor? | High | Medium | Low |
+| Performance predictability | Performance behaves as expected? | Very high | High | Medium |
+| Memory usage | Runtime memory consumption | Low | Low | High |
+| Startup time | App startup speed | Fast | Fast | Slower |
+| Debugging ease | Ease of finding bugs | Easy | Easy | Hard |
+| Schema evolution | Changing DB structure safely | Manual | Manual | Semi-automatic |
+| Testing simplicity | Ease of writing tests | Medium | Easy | Harder |
+| Best use cases | Where it shines | Low-level systems | SQL-heavy apps | CRUD-heavy apps |
+| Worst use cases | Where it struggles | Rapid dev | Pure CRUD | SQL-critical apps |
+| Typical users | Who usually uses it | System devs | Backend engineers | Enterprise devs |
+| Spring integration | How well it works with Spring | Good | Very good | Excellent |
+| Flow | Request processing path | Spring Service → Spring JDBC (JdbcTemplate / NamedParameterJdbcTemplate) → JDBC Driver → Database | Spring Service → MyBatis Mapper Interface → MyBatis SQL Session → JDBC Driver → Database | Spring Data Repository → JPA EntityManager → Hibernate Session → JDBC Driver → Database |
+
 
 
 #### Universal JDBC Interaction Flow

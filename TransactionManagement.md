@@ -127,6 +127,7 @@ Locking and versioning are required to guarantee business correctness.
 
 ### Final Memory Line
  | Component | What it provides | What happens if it's missing | 
+ |----------|------------------|---------------------------|
  | MVCC | High Concurrency | The DB would be incredibly slow because readers would have to wait for writers to finish | 
  | Isolation | Consistency Rules | "You would see ""partial"" data or data that changes mid-calculation, leading to logic errors." | 
  | Locks | Data Integrity | "Multiple transactions would overwrite each other’s changes, leading to ""Lost Updates.""" | 

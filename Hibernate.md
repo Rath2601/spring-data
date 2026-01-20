@@ -60,8 +60,6 @@
 
 ![Alt text](./entityLifeCycle.png)
 
-* Manually setting an ID makes it detached , we can’t persist detached object (EntityExistsException)
-
 | State          | Description                                         |
 | -------------- | --------------------------------------------------- |
 | **Transient**  | New object, not associated with persistence context |

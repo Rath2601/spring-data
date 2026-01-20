@@ -1,4 +1,32 @@
-### Hibernate Notes
+### Hibernate 
+* Maps Java objects to database tables (part of Java Persistence ecosystem)
+* Eliminates JDBC boilerplate code
+* ORM maps: **Java classes → Tables**, **Java variables → Columns**, **Java objects → Rows**
+* Benefits: Reduces SQL usage , Database-independent code
+
+| Component                       | Description                      | Key Responsibilities                                                                      | Important Points                                                  |
+| ------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| **Configuration**               | Starting point of Hibernate      | • Reads `hibernate.cfg.xml`<br>• Loads DB details and mappings<br>• Builds SessionFactory | • Created once<br>• Immutable after creation                      |
+| **SessionFactory**              | Factory for Session objects      | • Creates Session<br>• Manages 2nd level cache<br>• Holds DB metadata                     | • Heavyweight<br>• Thread-safe<br>• One per DB                    |
+| **Session**                     | Represents a single unit of work | • CRUD operations<br>• Manages persistent objects<br>• Maintains 1st level cache          | • Lightweight<br>• Not thread-safe<br>• Short-lived               |
+| **Transaction**                 | Logical unit of work             | • Begin, commit, rollback<br>• Ensures data consistency                                   | • Supports JDBC & JTA<br>• Ensures ACID properties                |
+| **Query**                       | Executes HQL or SQL              | • Fetch/update data<br>• Supports pagination & caching                                    | • DB independent (HQL)<br>• Object-oriented                       |
+| **Criteria API**                | Programmatic query mechanism     | • Builds dynamic queries<br>• No hardcoded SQL                                            | • Type-safe<br>• Easy for complex queries                         |
+| **Persistent Objects (Entity)** | Java objects mapped to tables    | • Represent DB rows<br>• Hold business data                                               | • Annotated with `@Entity`<br>• POJO based                        |
+| **Connection Pool**             | Manages DB connections           | • Reuses connections<br>• Improves performance                                            | • Uses C3P0, HikariCP                                             |
+| **Cache**                       | Stores frequently used data      | • Reduces DB calls<br>• Improves performance                                              | • 1st level: Session scoped<br>• 2nd level: SessionFactory scoped |
+| **JDBC**                        | Low-level DB communication       | • Executes generated SQL                                                                  | • Hibernate internally uses JDBC                                  |
+
+| Hibernate             | Spring Data JPA (auto configuration)         |
+| --------------------- | ------------------------ |
+| `Configuration`       | `application.properties` |
+| `SessionFactory`      | `EntityManagerFactory`   |
+| `Session`             | `EntityManager`          |
+| HQL                   | JPQL                     |
+| Hibernate Transaction | Spring `@Transactional`  |
+
+* SessionFactory, Session, HQL, Hibernate Transaction are used by Spring data JPA underneath
+
 #### General working
 * Flush = Synchronize in-memory changes → Database SQL.
 * Commit always triggers flush. Flush alone does not permanently save until commit.

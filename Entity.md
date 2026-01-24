@@ -60,10 +60,9 @@
 
 
 #### Misc
-**@Convert** : performs value transformation between an entity field and a single database column value (and back).
-**@Type** : performs custom type mapping, allowing Hibernate to store and retrieve complex or database-specific data types
-
-
+* **@Convert** : performs value transformation between an entity field and a single database column value (and back).
+* **@Type** : performs custom type mapping, allowing Hibernate to store and retrieve complex or database-specific data types
+---
 * **Proxy  accessed**-> Fires SQL query —> loads real data —> Replaces proxy with real data (thus hibernate delay loading data ~ LAZY LOADING)
 * **Bytecode** also do the same , but with feature like removes the need for runtime proxy subclasses, improves performance, supports final classes, and avoids equals/hashCode issues — at the cost of slightly longer build time
   (Bytecode enhancement rewrites entity classes at build time to inject **lazy-loading and dirty-tracking** logic directly into the class.)

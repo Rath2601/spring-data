@@ -87,3 +87,13 @@ Note : Manually setting an ID on a new entity makes it Detached, so persist() th
 | ID Assignment   | `order.id` gets value | Only copy gets ID          |
 | Returned Object | Same instance         | Must use returned instance |
 
+#### Hibernate Schema generation
+
+| Value        | What Hibernate does internally                                   | Simple Example Effect                                                                 |
+|--------------|------------------------------------------------------------------|----------------------------------------------------------------------------------------|
+| none         | Does nothing with the schema                                     | Uses DB as-is; no checks, no changes                                                 |
+| validate     | Compares entity mappings with DB schema and throws error if mismatch | If `orders.status` column is missing → app fails at startup                         |
+| update       | Compares mapping vs DB and executes required ALTER statements    | If new field `createdAt` added → Hibernate runs `ALTER TABLE orders ADD created_at` |
+| create       | Drops existing tables and recreates schema from entities        | Every restart wipes tables and creates fresh ones                                    |
+| create-drop  | Same as create, plus drops tables when app stops                | Tables exist only while application is running                                       |
+

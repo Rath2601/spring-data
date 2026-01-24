@@ -51,12 +51,6 @@
 | Forget UPDATE    | No DB change     | DB still updates       |
 
 
-| Situation              | Parent Loaded | Child Loaded |
-| ---------------------- | ------------- | ------------ |
-| `find()` + LAZY        | ✅ Yes         | ❌ No         |
-| `find()` + EAGER       | ✅ Yes         | ✅ Yes        |
-| LAZY + `getChildren()` | ✅ Yes         | ✅ Yes        |
-
 #### Entity States
 
 ![Alt text](./entityLifeCycle.png)

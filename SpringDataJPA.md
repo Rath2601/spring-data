@@ -15,6 +15,8 @@ Persistence Unit (logical configuration)
 &nbsp;&nbsp;&nbsp;&nbsp;↓ injected as  
 **SharedEntityManagerCreator Proxy** *(thread-safe, routes calls to correct SessionImpl)*
 
+* **@PersistenceContext**: JPA standard annotation, Injects transaction-scoped EntityManager, Supported by Spring (but spring encourages constructor auto wiring)
+
 #### Transaction Management Flow
 When a `@Transactional` method runs, **JpaTransactionManager** performs:
 1. Asks **EntityManagerFactory** to create a new **SessionImpl**

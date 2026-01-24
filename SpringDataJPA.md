@@ -70,3 +70,6 @@ When calling `em.persist(obj)`:
 * Both **Extended Persistence Context and Open EntityManager in View (OSIV)** are designed to solve the same problem: `the LazyInitializationException`
 * In OSIV, a filter keeps the standard, transaction-bound EntityManager open for the entire duration of the HTTP Request.
 * **disadvantage** : open DB connection until response send,  can lead to connection pool exhaustion.
+* **alternate to OSIV** : Using DTOs or Join Fetches
+
+---

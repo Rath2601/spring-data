@@ -32,6 +32,7 @@
 * Commit always triggers flush. Flush alone does not permanently save until commit.
 * AUTO flush ensures JPQL queries always run on up-to-date database state
 * Hibernate tracks changes to persistent entities. No need to write UPDATE SQL manually. (Active transaction & Entity must be persistent needed)
+* **Write-behind **:  Hibernate buffers entity changes in the persistence context and writes them to the database later during flush or commit.
 * the EntityManager is usually created and destroyed per transaction
 * Repositories are transactional by default. Services usually control transactions with @Transactional
 * We can use Hibernate alone instead of using Spring data JPA

@@ -62,8 +62,11 @@ When calling `em.persist(obj)`:
 #### Extended Persistence Context
 
 - Lives across **multiple transactions**  
-- Used for **stateful / long-running conversations**  
-- Not suitable for stateless web applications  
-- Rarely used in modern applications
+- Used for **stateful / long-running conversations**
+- **disadvantages** : JVM Heap Memory exhaustion by keeping stale data and data integrity risk is there
+- Not suitable for stateless web applications, Rarely used in modern applications
 
----
+#### Open EntityManager in View (OSIV)
+* Both **Extended Persistence Context and Open EntityManager in View (OSIV)** are designed to solve the same problem: `the LazyInitializationException`
+* In OSIV, a filter keeps the standard, transaction-bound EntityManager open for the entire duration of the HTTP Request.
+* **disadvantage** : open DB connection until response send,  can lead to connection pool exhaustion.

@@ -1,7 +1,7 @@
 ### SPRING DATA JPA FLOW
 
-#### EntityManager Flow
-##### Persistence Unit
+#### **EntityManager Flow**
+#### Persistence Unit
 Persistence Unit (logical configuration)  
 &nbsp;&nbsp;&nbsp;&nbsp;↓ built by  
 **LocalContainerEntityManagerFactoryBean**  
@@ -10,19 +10,19 @@ Persistence Unit (logical configuration)
 &nbsp;&nbsp;&nbsp;&nbsp;↓ implemented by  
 **SessionFactoryImpl** *(Hibernate, thread-safe, shared)*
 
-##### EntityManager Injection
+#### EntityManager Injection
 **EntityManager** interface  
 &nbsp;&nbsp;&nbsp;&nbsp;↓ injected as  
 **SharedEntityManagerCreator Proxy** *(thread-safe, routes calls to correct SessionImpl)*
 
-##### Transaction Management Flow
+#### Transaction Management Flow
 When a `@Transactional` method runs, **JpaTransactionManager** performs:
 1. Asks **EntityManagerFactory** to create a new **SessionImpl**
 2. Wraps that session in an **EntityManagerHolder**
 3. Binds the holder to the current thread using:  
    `TransactionSynchronizationManager.bindResource(factory, holder)`
 
-##### Runtime Resolution
+#### Runtime Resolution
 **SharedEntityManagerCreator** finds  
 &nbsp;&nbsp;&nbsp;&nbsp;↓  
 **SessionImpl** *(implements EntityManager, not thread-safe, performs JPA operations)*  
@@ -32,7 +32,7 @@ When calling `em.persist(obj)`:
 1. It calls `TransactionSynchronizationManager.getResource(factory)`
 2. Retrieves the bound **SessionImpl**
 
-##### Thread Safety Rule
+#### Thread Safety Rule
 - Each transaction/thread gets its own **SessionImpl**
 - **No SessionImpl is ever shared**
 - Thread safety is ensured by:
@@ -40,7 +40,7 @@ When calling `em.persist(obj)`:
   - **SharedEntityManagerCreator** routing calls to the correct thread-bound SessionImpl
 ---
 
-#### PersistenceContext
+#### **PersistenceContext**
 
 - In-memory container  
 - First-level cache  
@@ -48,7 +48,7 @@ When calling `em.persist(obj)`:
 - **Set-based cache** (ensures unique entity per ID in a transaction)  
 - **One Persistence Context per transaction**
 
-##### What Hibernate keeps in memory
+#### What Hibernate keeps in memory
 
 1. **Entity Instance**  
    - The object you directly interact with.
@@ -57,7 +57,7 @@ When calling `em.persist(obj)`:
    - A hidden stored copy of original values.  
    - Used for **Dirty Checking** to detect changes and trigger `UPDATE` queries if needed.
 
-##### Extended Persistence Context
+#### Extended Persistence Context
 
 - Lives across **multiple transactions**  
 - Used for **stateful / long-running conversations**  

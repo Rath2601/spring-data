@@ -20,6 +20,13 @@
 11. orphanRemoval = true , deletes child rows when removed from the parent collection within the same transaction.
 12. @MapsId should be used only when a child’s primary key is derived from a parent’s primary key — not when the child has its own generated ID.
 
+| Feature         | @IdClass                          | @EmbeddedId                           |
+|-----------------|-----------------------------------|----------------------------------------|
+| Mapping Style   | Flat (fields are in the Entity)   | Nested (fields are in the PK object)   |
+| Access         | entity.getOrderId()               | entity.getId().getOrderId()            |
+| JPQL Queries   | SELECT o.orderId FROM...          | SELECT o.id.orderId FROM...            |
+| Standard       | Old-school JPA style              | Modern, preferred JPA style            |
+
 
 #### Equals and Hashcode 
 * JPA entities must have stable equals() and hashCode() implementations. Using auto-generated identifiers in equals() / hashCode() is unsafe because the identifier value changes after persistence, breaking hash-based collections and Hibernate’s internal behavior.

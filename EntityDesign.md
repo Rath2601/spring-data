@@ -31,4 +31,4 @@ WHERE o.status = ?
 Customer customer;   // SELECT * FROM customer WHERE id IN (1,2,3,4,5,6,7,8,9,10); Batch sizing mitigate 1+N query issue but doesn't avoids it.
 ```
 * **Pagination pitfall** : **DO NOT paginate with JOIN FETCH on @OneToMany/@ManyToMany**
-  (Pagination must work on parent objects, not on joined rows : if I have 2 Orders and 3 orderItems I'd have 6 rows total and pagination based on that, Parents get split across pages)
+  - (Pagination must work on parent objects, not on joined rows : if I have 2 Orders and 3 orderItems I'd have 6 rows total and pagination based on that, Parents get split across pages)

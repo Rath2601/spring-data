@@ -37,6 +37,19 @@
 | Flow | Request processing path | Spring Service → Spring JDBC (JdbcTemplate / NamedParameterJdbcTemplate) → JDBC Driver → Database | Spring Service → MyBatis Mapper Interface → MyBatis SQL Session → JDBC Driver → Database | Spring Data Repository → JPA EntityManager → Hibernate Session → JDBC Driver → Database |
 
 
+NOTE : 
+* Spring Data JDBC :  
+    - we write queries in plain SQL.
+    - We don’t use any higher-level query language like JPQL.
+    - supports query methods & derived methods in SQL
+    - @Modifying used to annotate the query method that modifies the entity
+    - becomes tightly coupled with the database vendor.
+    - does not support the referencing of parameters with index numbers. We’re able only to reference parameters by name.
+```
+ @Modifying
+ @Query("UPDATE person SET first_name = :name WHERE id = :id")
+ boolean updateByFirstName(@Param("id") Long id, @Param("name") String name);
+```
 
 #### Universal JDBC Interaction Flow
 

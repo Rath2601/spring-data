@@ -149,30 +149,52 @@ Locking and versioning are required to guarantee business correctness.
 ---
 
 #### Common Locking Strategies
-##### Pessimistic Lock
+##### Pessimistic Lock (Real-time use case: Account balance / wallet credit) 
 ```java
 @Lock(LockModeType.PESSIMISTIC_WRITE)
 @Query("SELECT p FROM Product p")
 ```
-* Locks selected rows so other transactions must wait before modifying them.
+* Two transactions read same row, DB row locked on read Second transaction waits, No lost updates, Strong consistency guaranteed
+*  Locks selected rows so other transactions must wait before modifying them.
 * Prevents lost updates and double-debit problems.
 * Used for money transfers, inventory, reservations.
-##### Optimistic Lock
+  
+##### Optimistic Lock (Real-time use case: User profile / CMS edit)
 ```java
  @Version
- private Long version;
+ private Long version; // in entity
 ```
 * Adds a version field to detect if another transaction updated the row first.
 * If a conflict occurs, the transaction fails and must retry. (First update succeeds, Second update fails with exception)
-* Prevents silent overwriting of updates.
-* Used for user profiles, CMS edits
-##### Read-only Transaction 
+* Prevents silent overwriting of updates. (if both transactions modifies the entity)
+
+##### Deadlock
+
+* Trans A locks row X and waits for row Y, Trans B locks row Y and waits for row X
+* Database detects this and kills one transaction
+* The database throws an error that is translated by Spring into exceptions like: DeadlockLoserDataAccessException, PessimisticLockingFailureException, CannotAcquireLockException
+* **Common causes**:
+    - Concurrent updates on same rows
+    - Different locking order across transactions
+    - Pessimistic locking (@Lock(LockModeType.PESSIMISTIC_WRITE))
+    - Long-running transactions
+ * Using Spring Retry with @Retryable annotation we can retry certain transactional failure
+ * **Preventing Deadlocks** :
+    - Always lock rows in the same order
+    - Keep transactions short
+    - Prefer optimistic locking
+    - Use pessimistic locks only when necessary
+    - Use proper indexes to avoid table scans
+
+
+##### Read-only Transaction (used in pagination & reporting APIs)
 ```java
 @Transactional(readOnly = true)
 ```
 * Hint to ORM & DB that no writes will occur
-* Skips dirty checking
-* Avoids flush
+* Does not block write queries , but Does not throw exceptions on modification
+* Skips dirty (Better performance)
+* Avoids flush (Sets Hibernate FlushMode = MANUAL)
 * May use lighter locks
 * Improves performance
 
@@ -182,11 +204,3 @@ Locking and versioning are required to guarantee business correctness.
  | MVCC | High Concurrency | The DB would be incredibly slow because readers would have to wait for writers to finish | 
  | Isolation | Consistency Rules | You would see **partial** data or data that changes mid-calculation, leading to logic errors. | 
  | Locks | Data Integrity | Multiple transactions would overwrite each other’s changes, leading to Lost Updates. | 
-
-
-
-
-* @Transactional(readOnly = true) : Marks the transaction as read-only, Passes the hint to the JPA provider (Hibernate) (used in pagination & reporting APIs) Sets Hibernate FlushMode = MANUAL, Dirty checking is skipped (Better performance) ,No automatic flush at commit  Does not make DB read-only, Does not block write queries,  Does not throw exceptions on modification
-* Optimistic Locking (Real-time use case: User profile / CMS edit) Two users read same data, No DB lock, Uses version column First update succeeds, Second update fails with exception User refresh / retry When to use: High read, low write conflicts , Performance & scalability important Spring Data JPA: @Version
-* Pessimistic Locking (Real-time use case: Account balance / wallet credit) Two transactions read same row, DB row locked on read Second transaction waits, No lost updates, Strong consistency guaranteed When to use: Financial transactions, Money / credits involved Spring Data JPA: @Lock(LockModeType.PESSIMISTIC_WRITE)
-* A deadlock happens when: Trans A locks row X and waits for row Y, Trans B locks row Y and waits for row X | Database detects this and kills one transaction The database throws an error that is translated by Spring into exceptions like: DeadlockLoserDataAccessException, PessimisticLockingFailureException, CannotAcquireLockException Common causes : Concurrent updates on same rows, Different locking order across transactions, Pessimistic locking (@Lock(LockModeType.PESSIMISTIC_WRITE)), Long-running transactions Using Spring Retry with @Retryable annotation we can retry certain transactional failure Preventing Deadlocks (Best Practices):        Always lock rows in the same order      Keep transactions short      Prefer optimistic locking:       Use pessimistic locks only when necessary      Use proper indexes to avoid table scans
